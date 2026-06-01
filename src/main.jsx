@@ -5,11 +5,19 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import Main from './Layout/Main';
+import Home from './Components/Home';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <div className='text-center text-3xl'>Hello world! <button className="btn btn-outline btn-primary">Primary</button></div>,
+    element: <Main></Main>,
+    children:[
+      {
+        index: true,
+        element: <Home></Home>,
+      }
+    ]
   },
 ]);
 
@@ -17,6 +25,5 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <RouterProvider router={router} />
-
   </StrictMode>,
 )
