@@ -1,25 +1,41 @@
 import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import app from "../Firebase/firebase.config";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const Register = () => {
     const [user, setUser] = useState(null);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
+    // const [registerError, setRegisterError] = useState('');
+    // const [registerSuccess, setRegisterSuccess] = useState('');
 
     const handleRegister = e => {
         e.preventDefault();
         const email = e.target.email.value;
         const password = e.target.password.value;
         console.log('Email:', email, 'Password:', password);
+  
+        // To clear up the error or success massage after each new try
+        // setRegisterError('');
+        // setRegisterSuccess('')
+
+        if(password.length < 6){
+            toast.error('Password should be at least 6 character or longer');
+            return;
+        }
 
         // create user
         createUserWithEmailAndPassword(auth, email, password)
             .then(result => {
-                console.log(result)
+                console.log(result);
+                // setRegisterSuccess(result)
+                toast.success('Account Successfully Created!')
             })
             .catch(error => {
-                console.log(error)
+                console.log(error);
+                // setRegisterError(error.message)
+                toast.error(error.message)
             })
     }
 
@@ -46,6 +62,12 @@ const Register = () => {
 
                         <label className="label">Password</label>
                         <input type="password" name="password" className="input" placeholder="Enter Your Password" required />
+                        {/* {
+                            registerError && <p className="text-red-500">{registerError}</p>
+                        } */}
+                        {/* {
+                            registerSuccess && <p className="text-green-500">{registerSuccess}</p>
+                        } */}
 
                         <div className="text-left"><a className="link link-hover text-l">Forgot password?</a></div>
                         <button className="btn btn-neutral hover:bg-gray-200 hover:text-gray-800 mt-4">Register</button>
