@@ -1,4 +1,4 @@
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import app from "../Firebase/firebase.config";
 import { useState } from "react";
 
@@ -12,19 +12,28 @@ const Register = () => {
         const email = e.target.email.value;
         const password = e.target.password.value;
         console.log('Email:', email, 'Password:', password);
+
+        // create user
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(result => {
+                console.log(result)
+            })
+            .catch(error => {
+                console.log(error)
+            })
     }
 
     const handleGoogleSignIn = () => {
-            signInWithPopup(auth, provider)
-                .then(result => {
-                    const loggedInUser = result.user;
-                    console.log(loggedInUser);
-                    setUser(loggedInUser)
-                })
-                .catch(error => {
-                    console.log('Error:', error)
-                })
-        };
+        signInWithPopup(auth, provider)
+            .then(result => {
+                const loggedInUser = result.user;
+                console.log(loggedInUser);
+                setUser(loggedInUser)
+            })
+            .catch(error => {
+                console.log('Error:', error)
+            })
+    };
 
     return (
         <div>
