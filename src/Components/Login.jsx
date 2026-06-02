@@ -7,6 +7,14 @@ const Login = () => {
     const [user, setUser] = useState(null)
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
+
+    const handleLogin = e => {
+        e.preventDefault();
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+        console.log('Email:', email, 'Password:', password);
+    }
+
     const handleGoogleSignIn = () => {
         signInWithPopup(auth, provider)
             .then(result => {
@@ -19,16 +27,16 @@ const Login = () => {
             })
     };
 
-    const handleSignOut = () => {
-        signOut(auth)
-            .then(result => {
-                console.log(result)
-                setUser(null)
-            })
-            .catch(error => {
-                console.log('Error:', error)
-            })
-    }
+    // const handleSignOut = () => {
+    //     signOut(auth)
+    //         .then(result => {
+    //             console.log(result)
+    //             setUser(null)
+    //         })
+    //         .catch(error => {
+    //             console.log('Error:', error)
+    //         })
+    // }
 
     return (
 
@@ -45,7 +53,7 @@ const Login = () => {
             <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl mx-auto">
                 <h1 className="text-3xl font-bold my-5">Please Login!</h1>
                 <div className="card-body">
-                    <form className="fieldset">
+                    <form onSubmit={handleLogin} className="fieldset">
                         <label className="label">Email</label>
                         <input type="email" className="input" placeholder="Enter Your Email" required />
                         <label className="label">Password</label>
