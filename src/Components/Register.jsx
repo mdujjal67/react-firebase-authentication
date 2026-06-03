@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, sendEmailVerification, signInWithPopup } from "firebase/auth";
 import app from "../Firebase/firebase.config";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -37,8 +37,14 @@ const Register = () => {
                 console.log(result);
                 // setRegisterSuccess(result)
                 setRegisterError(''); // Clear up the error massage after success (2)
-                toast.success('Account Successfully Created!');
+                // toast.success('Account Successfully Created!');
                 e.target.reset(); //clear the input field after user created
+
+                // send email verification
+                sendEmailVerification(result.user)
+                .then(() => {
+                    toast.success('Please check your email to verify your account!');
+                })
             })
             .catch(error => {
                 // console.log(error);

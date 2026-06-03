@@ -17,14 +17,19 @@ const Login = () => {
         e.preventDefault();
         const email = e.target.email.value;
         const password = e.target.password.value;
-        console.log('Email:', email, 'Password:', password);
+        // console.log('Email:', email, 'Password:', password);
         setLoginError(''); // Clear up the error massage after each new try (1)
 
         signInWithEmailAndPassword(auth, email, password)
             .then(result => {
-                console.log(result.user);
+                // console.log(result.user);
                 setLoginError(''); // Clear up the error massage after each new try (2)
-                toast.success('Login Successful!');
+                if (result.user.emailVerified) {
+                    toast.success('Login Successful!');
+                }
+                else {
+                    toast.error('Please verify your email address first to login')
+                }
                 e.target.reset(); //clear the input fields after login
             })
             .catch(error => {
