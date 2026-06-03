@@ -7,7 +7,7 @@ const Register = () => {
     const [user, setUser] = useState(null);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
-    // const [registerError, setRegisterError] = useState('');
+    const [registerError, setRegisterError] = useState('');
     // const [registerSuccess, setRegisterSuccess] = useState('');
 
     const handleRegister = e => {
@@ -15,13 +15,12 @@ const Register = () => {
         const email = e.target.email.value;
         const password = e.target.password.value;
         console.log('Email:', email, 'Password:', password);
-  
-        // To clear up the error or success massage after each new try
-        // setRegisterError('');
+
+        setRegisterError(''); // Clear up the error massage after each new try (1)
         // setRegisterSuccess('')
 
-        if(password.length < 6){
-            toast.error('Password should be at least 6 character or longer');
+        if (password.length < 6 || !/[A-Z]/.test(password) || !/\d/.test(password)) {
+            setRegisterError('Password must be 6+ characters, have an uppercase letter, and a number.');
             return;
         }
 
@@ -30,12 +29,18 @@ const Register = () => {
             .then(result => {
                 console.log(result);
                 // setRegisterSuccess(result)
-                toast.success('Account Successfully Created!')
+                setRegisterError(''); // Clear up the error massage after success (2)
+                toast.success('Account Successfully Created!');
+                e.target.reset(); //clear the input field after user created
             })
             .catch(error => {
-                console.log(error);
-                // setRegisterError(error.message)
-                toast.error(error.message)
+                // console.log(error);
+                if (error.code === 'auth/email-already-in-use') {
+                    setRegisterError('This email is already registered.');
+                } 
+                else {
+                    setRegisterError(error.message);
+                }
             })
     }
 
@@ -62,9 +67,9 @@ const Register = () => {
 
                         <label className="label">Password</label>
                         <input type="password" name="password" className="input" placeholder="Enter Your Password" required />
-                        {/* {
+                        {
                             registerError && <p className="text-red-500">{registerError}</p>
-                        } */}
+                        }
                         {/* {
                             registerSuccess && <p className="text-green-500">{registerSuccess}</p>
                         } */}
