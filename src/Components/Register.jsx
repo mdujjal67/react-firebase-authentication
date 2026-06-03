@@ -3,6 +3,7 @@ import app from "../Firebase/firebase.config";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Register = () => {
     const [user, setUser] = useState(null);
@@ -25,7 +26,7 @@ const Register = () => {
             setRegisterError('Password must be 6+ characters, have an uppercase letter, and a number.');
             return;
         }
-        else if(!termsAccepted){
+        else if (!termsAccepted) {
             setRegisterError('Please Accept Our Terms & Condition');
             return;
         }
@@ -62,6 +63,7 @@ const Register = () => {
             })
     };
 
+
     return (
         <div>
             <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl mx-auto">
@@ -85,7 +87,7 @@ const Register = () => {
                             </span>
                         </div>
                         {
-                            registerError && <p className="text-red-500">{registerError}</p>
+                            registerError && <p className="text-red-500 text-left">{registerError}</p>
                         }
                         {/* {
                             registerSuccess && <p className="text-green-500">{registerSuccess}</p>
@@ -107,6 +109,7 @@ const Register = () => {
                     </form>
 
                     <button onClick={handleGoogleSignIn} className="btn btn-accent hover:bg-gray-200">Register via Google</button>
+                    <p>Already have an account? <Link className="text-blue-500" to="/login">Login</Link></p>
                 </div>
             </div>
         </div>

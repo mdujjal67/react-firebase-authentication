@@ -1,18 +1,41 @@
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
 import app from "../Firebase/firebase.config";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 
 const Login = () => {
     const [user, setUser] = useState(null)
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
+    const [loginError, setLoginError] = useState('')
+    const emailRef = useRef(null);
+    const [passwordResetError, setPasswordResetError] = useState('')
 
     const handleLogin = e => {
         e.preventDefault();
         const email = e.target.email.value;
         const password = e.target.password.value;
         console.log('Email:', email, 'Password:', password);
+        setLoginError(''); // Clear up the error massage after each new try (1)
+
+        signInWithEmailAndPassword(auth, email, password)
+            .then(result => {
+                console.log(result.user);
+                setLoginError(''); // Clear up the error massage after each new try (2)
+                toast.success('Login Successful!');
+                e.target.reset(); //clear the input fields after login
+            })
+            .catch(error => {
+                // console.log(error);
+                if (error.code === 'auth/invalid-credential') {
+                    setLoginError('Please Enter your correct email & password.');
+                }
+                else {
+                    setLoginError(error.message);
+                }
+            })
     }
 
     const handleGoogleSignIn = () => {
@@ -26,6 +49,33 @@ const Login = () => {
                 console.log('Error:', error)
             })
     };
+
+    const handleForgetPassword = () => {
+        const email = emailRef.current.value;
+        console.log(emailRef)
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        // Validate if empty OR if it fails the regex pattern match
+        if (!email) {
+            setPasswordResetError('Please provide an email first');
+            return;
+        }
+        else if (!emailRegex.test(email)) {
+            setPasswordResetError('Please enter a valid registered email address (e.g., name@example.com).');
+            return;
+        }
+        // password reset email validation
+        sendPasswordResetEmail(auth, email)
+            .then(result => {
+                setPasswordResetError('');
+                toast.success('An email has been send to your email-address to reset your password');
+                console.log(result)
+            })
+            .catch((error) => {
+                setPasswordResetError(error.message);
+            });
+    }
+
 
     // const handleSignOut = () => {
     //     signOut(auth)
@@ -55,13 +105,24 @@ const Login = () => {
                 <div className="card-body">
                     <form onSubmit={handleLogin} className="fieldset">
                         <label className="label">Email</label>
-                        <input type="email" name="email" className="input" placeholder="Enter Your Email" required />
+                        <input
+                            type="email"
+                            name="email"
+                            className="input"
+                            ref={emailRef}
+                            placeholder="Enter Your Email" required />
                         <label className="label">Password</label>
                         <input type="password" name="password" className="input" placeholder="Enter Your Password" required />
-                        <div className="text-left"><a className="link link-hover text-l">Forgot password?</a></div>
+                        {
+                            loginError && <span className="text-red-500 text-left">{loginError}</span>
+                        }
+                        <div className="text-left"><a onClick={handleForgetPassword} className="link link-hover text-l">Forgot password?</a>
+                            <p className="text-red-500 text-left">{passwordResetError}</p>
+                        </div>
                         <button className="btn btn-neutral hover:bg-gray-200 hover:text-gray-800 mt-4">Login</button>
                     </form>
                     <button onClick={handleGoogleSignIn} className="btn btn-accent hover:bg-gray-200">Google Login</button>
+                    <p>Don't have an account? <Link className="text-blue-500" to="/register">Register</Link></p>
                 </div>
             </div>
         </div>
