@@ -1,4 +1,4 @@
-import { getAuth, GoogleAuthProvider, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
 import app from "../Firebase/firebase.config";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -24,16 +24,21 @@ const Login = () => {
             .then(result => {
                 // console.log(result.user);
                 setLoginError(''); // Clear up the error massage after each new try (2)
-                if (result.user.emailVerified) {
+                if (result.user.emailVerified === true) {
                     toast.success('Login Successful!');
+                    console.log(result)
                 }
                 else {
-                    toast.error('Please verify your email address first to login')
+                    signOut(auth)
+                    toast.error('Please verify your email address first to login');
+                    sendEmailVerification(result.user)
+                    .then()
+                    .catch()
                 }
                 e.target.reset(); //clear the input fields after login
             })
             .catch(error => {
-                // console.log(error);
+                console.log(error);
                 if (error.code === 'auth/invalid-credential') {
                     setLoginError('Please Enter your correct email & password.');
                 }

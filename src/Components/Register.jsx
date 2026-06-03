@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, sendEmailVerification, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, sendEmailVerification, signInWithPopup, updateProfile } from "firebase/auth";
 import app from "../Firebase/firebase.config";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -14,10 +14,11 @@ const Register = () => {
 
     const handleRegister = e => {
         e.preventDefault();
+        const name = e.target.name.value;
         const email = e.target.email.value;
         const password = e.target.password.value;
         const termsAccepted = e.target.terms.checked;
-        console.log('Email:', email, 'Password:', password);
+        console.log('Name:',  name ,'Email:', email, 'Password:', password, 'accepted:', termsAccepted);
 
         setRegisterError(''); // Clear up the error massage after each new try (1)
         // setRegisterSuccess('')
@@ -39,6 +40,14 @@ const Register = () => {
                 setRegisterError(''); // Clear up the error massage after success (2)
                 // toast.success('Account Successfully Created!');
                 e.target.reset(); //clear the input field after user created
+
+                // update user profile
+                updateProfile(result.user, {
+                    displayName: name,
+                    photoURL: 'https://example.com/jane-q-user/profile.jpg'
+                })
+                .then(() => console.log('profile updated'))
+                .catch()
 
                 // send email verification
                 sendEmailVerification(result.user)
@@ -76,6 +85,9 @@ const Register = () => {
                 <h1 className="text-3xl font-bold my-5">Please Register!</h1>
                 <div className="card-body">
                     <form onSubmit={handleRegister} className="fieldset">
+                        <label className="label">Name</label>
+                        <input type="name" name="name" className="input" placeholder="Enter Your Name" required />
+                        
                         <label className="label">Email</label>
                         <input type="email" name="email" className="input" placeholder="Enter Your Email" required />
 
