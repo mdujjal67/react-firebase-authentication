@@ -2,13 +2,14 @@ import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWith
 import app from "../Firebase/firebase.config";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 const Register = () => {
     const [user, setUser] = useState(null);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
     const [registerError, setRegisterError] = useState('');
-    // const [registerSuccess, setRegisterSuccess] = useState('');
+    const [showPassword, setShowPassword] = useState(false)
 
     const handleRegister = e => {
         e.preventDefault();
@@ -37,7 +38,7 @@ const Register = () => {
                 // console.log(error);
                 if (error.code === 'auth/email-already-in-use') {
                     setRegisterError('This email is already registered.');
-                } 
+                }
                 else {
                     setRegisterError(error.message);
                 }
@@ -66,7 +67,18 @@ const Register = () => {
                         <input type="email" name="email" className="input" placeholder="Enter Your Email" required />
 
                         <label className="label">Password</label>
-                        <input type="password" name="password" className="input" placeholder="Enter Your Password" required />
+                        <div className="relative w-full flex items-center">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                className="input"
+                                placeholder="Enter Your Password" required />
+                            <span className="cursor-pointer absolute right-6" onClick={() => setShowPassword(!showPassword)}>
+                                {
+                                    showPassword ? <FaRegEyeSlash></FaRegEyeSlash> : <FaRegEye></FaRegEye>
+                                }
+                            </span>
+                        </div>
                         {
                             registerError && <p className="text-red-500">{registerError}</p>
                         }
