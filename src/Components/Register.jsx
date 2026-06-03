@@ -15,6 +15,7 @@ const Register = () => {
         e.preventDefault();
         const email = e.target.email.value;
         const password = e.target.password.value;
+        const termsAccepted = e.target.terms.checked;
         console.log('Email:', email, 'Password:', password);
 
         setRegisterError(''); // Clear up the error massage after each new try (1)
@@ -22,6 +23,10 @@ const Register = () => {
 
         if (password.length < 6 || !/[A-Z]/.test(password) || !/\d/.test(password)) {
             setRegisterError('Password must be 6+ characters, have an uppercase letter, and a number.');
+            return;
+        }
+        else if(!termsAccepted){
+            setRegisterError('Please Accept Our Terms & Condition');
             return;
         }
 
@@ -86,9 +91,21 @@ const Register = () => {
                             registerSuccess && <p className="text-green-500">{registerSuccess}</p>
                         } */}
 
-                        <div className="text-left"><a className="link link-hover text-l">Forgot password?</a></div>
+                        {/* Wrap them in a flex container row */}
+                        <div className="flex items-center gap-2 mt-2 justify-start">
+                            <input
+                                type="checkbox"
+                                name="terms"
+                                id="terms"
+                                className="checkbox checkbox-xs checkbox-primary"
+                            />
+                            <label htmlFor="terms" className="cursor-pointer text-xs">
+                                Accept Our <a className="underline text-blue-600" href="/">Terms and Condition</a>
+                            </label>
+                        </div>
                         <button className="btn btn-neutral hover:bg-gray-200 hover:text-gray-800 mt-4">Register</button>
                     </form>
+
                     <button onClick={handleGoogleSignIn} className="btn btn-accent hover:bg-gray-200">Register via Google</button>
                 </div>
             </div>
